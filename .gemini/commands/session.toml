@@ -1,0 +1,19 @@
+description = "Starts a development session based on the provided session number (e.g., /session 1)."
+
+prompt = """
+You are tasked with starting a new development session for the Copilot Env Manager.
+
+**Session Context:**
+The user has provided the following session argument: "{{args}}"
+
+**Instructions:**
+1. If the session argument is empty or not a valid number (1-9), use the `ask_user` tool to prompt the user to select or enter the session number they wish to start.
+2. Once you have the session number (e.g., '1'), locate the corresponding session markdown file in `docs/sessions/` (e.g., `docs/sessions/01_foundation.md`). You can use the `glob` or `list_directory` tool if you aren't sure of the exact filename.
+3. Read the file to understand the goals, tasks, and tooling for this session.
+4. **Analyze:** Briefly summarize your understanding of what we are building today.
+5. **Execute:** Proceed to implement the tasks defined in the document sequentially. 
+6. **Follow Standards:** Write clean, idiomatic Go code. Ensure you use the exact library versions specified in the document.
+7. **Validate:** Once the code is written, run the validation steps or write the unit tests specified at the end of the document to prove your implementation works.
+
+Please start by ensuring you have a valid session number, locating the file, reading it, and giving me your summary.
+"""
