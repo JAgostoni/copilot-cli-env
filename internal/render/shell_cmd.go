@@ -38,6 +38,7 @@ func (r *shellCommandRenderer) Render(env config.CopilotEnv) (string, error) {
 			"COPILOT_OFFLINE",
 			"COPILOT_PROVIDER_MAX_PROMPT_TOKENS",
 			"COPILOT_PROVIDER_MAX_OUTPUT_TOKENS",
+			"COPILOT_PROVIDER_WIRE_API",
 		}
 		for _, k := range vars {
 			switch r.shell {
@@ -67,6 +68,13 @@ func (r *shellCommandRenderer) Render(env config.CopilotEnv) (string, error) {
 			Key   string
 			Value string
 		}{"COPILOT_OFFLINE", "true"})
+	}
+
+	if env.WireAPI != "" {
+		vars = append(vars, struct {
+			Key   string
+			Value string
+		}{"COPILOT_PROVIDER_WIRE_API", env.WireAPI})
 	}
 
 	if env.MaxPromptTokens > 0 {

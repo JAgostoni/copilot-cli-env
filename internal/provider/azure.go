@@ -51,12 +51,21 @@ func (p *azureProvider) MapEnv(baseURL, model, apiKey string) (config.CopilotEnv
 		return config.CopilotEnv{}, errors.New("base URL must be a valid Azure OpenAI endpoint (e.g., https://your-resource.openai.azure.com/)")
 	}
 
+	wireAPI := ""
+	for i := 0; i < len(model)-4; i++ {
+		if model[i:i+5] == "gpt-5" {
+			wireAPI = "responses"
+			break
+		}
+	}
+
 	return config.CopilotEnv{
 		ProviderBaseURL: baseURL,
 		Model:           model,
 		ProviderType:    "azure",
 		APIKey:          apiKey,
 		Offline:         false,
+		WireAPI:         wireAPI,
 	}, nil
 }
 

@@ -42,13 +42,30 @@ func (p *openRouterProvider) MapEnv(baseURL, model, apiKey string) (config.Copil
 		finalBaseURL = p.DefaultBaseURL()
 	}
 
+	// OpenRouter acts as an OpenAI compatible endpoint
+	wireAPI := ""
+	if len(model) >= 5 && model[:5] == "gpt-5" {
+		wireAPI = "responses"
+	} else if len(model) > 7 && model[len(model)-5:] == "gpt-5" {
+		// Some openrouter models might look like openai/gpt-5
+		wireAPI = "responses"
+	} else {
+		// General substring check for gpt-5
+		for i := 0; i < len(model)-4; i++ {
+			if model[i:i+5] == "gpt-5" {
+				wireAPI = "responses"
+				break
+			}
+		}
+	}
+
 	return config.CopilotEnv{
 		ProviderBaseURL: finalBaseURL,
 		Model:           model,
-		// OpenRouter acts as an OpenAI compatible endpoint
 		ProviderType:    "openai",
 		APIKey:          apiKey,
 		Offline:         false,
+		WireAPI:         wireAPI,
 	}, nil
 }
 

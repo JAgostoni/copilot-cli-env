@@ -35,6 +35,9 @@ func (r *envFileRenderer) Render(env config.CopilotEnv) (string, error) {
 	if env.Offline {
 		builder.WriteString("COPILOT_OFFLINE=true\n")
 	}
+	if env.WireAPI != "" {
+		builder.WriteString(fmt.Sprintf("COPILOT_PROVIDER_WIRE_API=%s\n", env.WireAPI))
+	}
 	if env.MaxPromptTokens > 0 {
 		builder.WriteString(fmt.Sprintf("COPILOT_PROVIDER_MAX_PROMPT_TOKENS=%d\n", env.MaxPromptTokens))
 	}

@@ -10,4 +10,5 @@ type CopilotEnv struct {
 	IsReset         bool   // Indicates if this is a configuration reset action
 	MaxPromptTokens int    // COPILOT_PROVIDER_MAX_PROMPT_TOKENS
 	MaxOutputTokens int    // COPILOT_PROVIDER_MAX_OUTPUT_TOKENS
+	WireAPI         string // COPILOT_PROVIDER_WIRE_API (Optional: 'completions' or 'responses')
 }

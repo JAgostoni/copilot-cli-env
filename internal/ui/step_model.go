@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -65,7 +66,7 @@ type modelPickerModel struct {
 func initialModelPickerModel(app *AppModel) modelPickerModel {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205")) // need lipgloss import or use styles, but it's fine
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 
 	ti := textinput.New()
 	ti.Placeholder = "e.g., custom-model-name"
@@ -76,6 +77,21 @@ func initialModelPickerModel(app *AppModel) modelPickerModel {
 	l.Title = "Select AI Model"
 	l.SetShowStatusBar(true)
 	l.SetFilteringEnabled(true)
+	
+	// Override default fuzzy search with a strict substring search
+	l.Filter = func(term string, targets []string) []list.Rank {
+		var ranks []list.Rank
+		term = strings.ToLower(term)
+		for i, t := range targets {
+			if strings.Contains(strings.ToLower(t), term) {
+				ranks = append(ranks, list.Rank{
+					Index: i,
+				})
+			}
+		}
+		return ranks
+	}
+
 	l.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
 			key.NewBinding(
@@ -181,6 +197,14 @@ func (m modelPickerModel) Update(msg tea.Msg) (modelPickerModel, tea.Cmd) {
 					m.app.configData.MaxOutputTokens = i.model.MaxCompletionTokens
 					return m, m.app.nextStep()
 				}
+			}
+		}
+
+		// Auto-trigger filter mode when typing printable characters if not already filtering
+		if !m.manual && !m.loading && m.list.FilterState() == list.Unfiltered {
+			if msg.Type == tea.KeyRunes && msg.String() != "/" {
+				// Inject the filter key command first
+				m.list, _ = m.list.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'/'}})
 			}
 		}
 	}

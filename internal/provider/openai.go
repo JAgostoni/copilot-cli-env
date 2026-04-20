@@ -42,12 +42,18 @@ func (p *openaiProvider) MapEnv(baseURL, model, apiKey string) (config.CopilotEn
 		finalBaseURL = p.DefaultBaseURL()
 	}
 
+	wireAPI := ""
+	if len(model) >= 5 && model[:5] == "gpt-5" {
+		wireAPI = "responses"
+	}
+
 	return config.CopilotEnv{
 		ProviderBaseURL: finalBaseURL,
 		Model:           model,
 		ProviderType:    "openai",
 		APIKey:          apiKey,
 		Offline:         false,
+		WireAPI:         wireAPI,
 	}, nil
 }
 
